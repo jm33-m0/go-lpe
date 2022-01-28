@@ -18,11 +18,11 @@ go get -u -v github.com/jm33-m0/go-lpe
 package main
 
 import (
-    gople "github.com/jm33-m0/go-lpe"
+    golpe "github.com/jm33-m0/go-lpe"
 )
 
 func main() {
-    gople.RunAll()
+    golpe.RunAll()
 }
 ```
 
