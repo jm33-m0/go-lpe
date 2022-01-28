@@ -3,10 +3,10 @@ A collection of LPE exploits written in Go
 
 ## Exploits
 
-| CVE        | Description                                                                        | Link                                          |
-|------------|------------------------------------------------------------------------------------|-----------------------------------------------|
-| 2021-4034  | pkexec, using `execve` syscall in Go doesn't work, so we just run blasty's exploit | https://haxx.in/files/blasty-vs-pkexec.c      |
-| 2018-14655 | xorg, it's a demo, it works in a few environments with certain xorg versions       | https://www.cvedetails.com/cve/CVE-2018-14655 |
+| CVE        | Description                                                                  | Link                                          |
+|------------|------------------------------------------------------------------------------|-----------------------------------------------|
+| 2021-4034  | pkexec exploit, rewritten in pure Go, base on blasty's poc                   | https://haxx.in/files/blasty-vs-pkexec.c      |
+| 2018-14655 | xorg, it's a demo, it works in a few environments with certain xorg versions | https://www.cvedetails.com/cve/CVE-2018-14655 |
 
 ## Usage
 
