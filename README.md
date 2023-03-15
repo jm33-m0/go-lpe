@@ -5,10 +5,10 @@ A collection of LPE exploits written in Go
 
 ## Exploits
 
-| CVE        | Description                                                                  | Link                                          |
-|------------|------------------------------------------------------------------------------|-----------------------------------------------|
-| 2021-4034  | pkexec exploit rewritten in pure Go that is based on blasty's poc                   | https://haxx.in/files/blasty-vs-pkexec.c      |
-| 2018-14655 | xorg (a demo) that works in environments with certain xorg versions | https://www.cvedetails.com/cve/CVE-2018-14655 |
+| CVE        | Description                                                         | Link                                          |
+|------------|---------------------------------------------------------------------|-----------------------------------------------|
+| 2021-4034  | pkexec exploit rewritten in pure Go that is based on blasty's poc   | https://haxx.in/files/blasty-vs-pkexec.c      |
+| 2018-14665 | xorg (a demo) that works in environments with certain xorg versions | https://www.cvedetails.com/cve/CVE-2018-14665 |
 
 ## Get Started
 
