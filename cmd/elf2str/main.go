@@ -20,8 +20,8 @@ func main() {
 
 	elf_str := golpe.Bin2String(elf_data)
 
-	// fmt.Printf("\n%s\n\n", elf_str)
-	fmt.Printf("%s\n", format_elf_str(elf_str))
+	fmt.Printf("\n%s\n\n", elf_str)
+	// fmt.Printf("%s\n", format_elf_str(elf_str))
 }
 
 func format_elf_str(str string) (ret string) {
