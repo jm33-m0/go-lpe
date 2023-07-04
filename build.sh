@@ -9,9 +9,8 @@
 )
 
 (
-	echo "building cmd/demo/main.go"
-	cd cmd/demo &&
-		CGO_ENABLED=0 go build -o ../../emp3r0r.exe -ldflags="-s -w" -trimpath
-	command -v upx >/dev/null && upx ../../emp3r0r.exe
-	echo "Copy ./emp3r0r.exe to your target environment and rename it to emp3r0r. Test ./golpe with it, you should get a root shell"
+	echo "building demo.c"
+	musl-gcc -static -s -o emp3r0r.exe demo.c || echo "musl-gcc not found"
+	command -v upx >/dev/null && upx emp3r0r.exe
+	echo "Rename emp3r0r.exe to emp3r0r and use it with golpe.exe"
 )
