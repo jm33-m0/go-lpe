@@ -13,7 +13,7 @@ var All = map[string]func() error{
 func RunAll() (err error) {
 	for cve, exp := range All {
 		log.Printf("Trying %s...", cve)
-		pid, _, _ := syscall.Syscall(syscall.SYS_FORK, 0, 0, 0)
+		pid, _, _ := syscall.Syscall(syscall.SYS_CLONE, 0, 0, 0)
 		if pid == 0 {
 			err = exp()
 			if err == nil {
