@@ -2,6 +2,9 @@ package golpe
 
 import (
 	"log"
+	"os"
+	"os/signal"
+	"runtime"
 	"syscall"
 )
 
@@ -12,7 +15,26 @@ var All = map[string]func() error{
 
 func RunAll() (err error) {
 	for cve, exp := range All {
-		log.Printf("Trying %s...", cve)
+		runtime.LockOSThread()
+		defer runtime.UnlockOSThread()
+		sigCh := make(chan os.Signal, 1)
+		signal.Notify(sigCh, syscall.SIGCHLD)
+
+		go func() {
+			for {
+				<-sigCh // Wait for SIGCHLD signal
+				// Reap zombie processes
+				for {
+					var status syscall.WaitStatus
+					// Use WNOHANG to non-blockingly wait for any child process
+					pid, _ := syscall.Wait4(-1, &status, syscall.WNOHANG, nil)
+					if pid <= 0 {
+						break // No more child processes
+					}
+				}
+			}
+		}()
+		log.Printf("%d Trying %s...", os.Getpid(), cve)
 		pid, _, _ := syscall.Syscall(syscall.SYS_CLONE, 0, 0, 0)
 		if pid == 0 {
 			err = exp()
