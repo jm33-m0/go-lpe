@@ -6,15 +6,15 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mholt/archiver/v3"
+	"github.com/mholt/archiver/v4"
 )
 
-// Base64Encode decode a base64 encoded string (to []byte)
+// Base64Encode encodes a byte slice to a base64 URL-encoded string
 func Base64Encode(data []byte) string {
 	return base64.URLEncoding.EncodeToString(data)
 }
 
-// Base64Decode decode a base64 encoded string (to []byte)
+// Base64Decode decodes a base64 URL-encoded string to a byte slice
 func Base64Decode(text string) []byte {
 	dec, err := base64.URLEncoding.DecodeString(text)
 	if err != nil {
@@ -24,20 +24,29 @@ func Base64Decode(text string) []byte {
 	return dec
 }
 
-// Bin2String compress binary file and encode with base64
+// Bin2String compresses a binary file and encodes it with base64
 func Bin2String(data []byte) (res string) {
-	bz2 := &archiver.Bz2{}
-	var compressed_buf bytes.Buffer
-	reader := bytes.NewReader(data)
-	err := bz2.Compress(reader, &compressed_buf)
+	var compressedBuf bytes.Buffer
+	// Wrap the underlying writer with BZ2 compressor
+	compressor, err := archiver.Bz2{}.OpenWriter(&compressedBuf)
 	if err != nil {
 		log.Printf("Bin2String: %v", err)
 		return
 	}
-	compressed_bin := compressed_buf.Bytes()
+	defer compressor.Close()
 
-	// encode
-	res = Base64Encode(compressed_bin)
+	// Compress the data
+	_, err = compressor.Write(data)
+	if err != nil {
+		log.Printf("Bin2String: Write to compressor failed: %v", err)
+		return
+	}
+
+	// Get the compressed binary data
+	compressedBin := compressedBuf.Bytes()
+
+	// Encode the compressed data to base64
+	res = Base64Encode(compressedBin)
 	if res == "" {
 		log.Println("Bin2String failed, empty string generated")
 	}
@@ -45,23 +54,29 @@ func Bin2String(data []byte) (res string) {
 	return
 }
 
-// ExtractFileFromString base64 decode, and then decompress using bzip2
+// ExtractFileFromString base64 decodes and decompresses using BZ2
 func ExtractFileFromString(data string) (out []byte, err error) {
-	// decode
+	// Decode base64
 	decoded := Base64Decode(data)
 	if len(decoded) == 0 {
 		return nil, fmt.Errorf("ExtractFileFromString: Failed to decode")
 	}
 
-	// decompress
-	bz2 := &archiver.Bz2{}
-	var decompress_buf bytes.Buffer
-	reader := bytes.NewReader(decoded)
-	err = bz2.Decompress(reader, &decompress_buf)
+	var decompressBuf bytes.Buffer
+	// Wrap the underlying reader with BZ2 decompressor
+	decompressor, err := archiver.Bz2{}.OpenReader(bytes.NewReader(decoded))
 	if err != nil {
-		return nil, fmt.Errorf("ExtractFileFromString: Decompress: %v", err)
+		return nil, fmt.Errorf("ExtractFileFromString: %v", err)
+	}
+	defer decompressor.Close()
+
+	// Decompress the data
+	_, err = decompressBuf.ReadFrom(decompressor)
+	if err != nil {
+		return nil, fmt.Errorf("ExtractFileFromString: Read from decompressor failed: %v", err)
 	}
 
-	out = decompress_buf.Bytes()
+	// Get the decompressed data
+	out = decompressBuf.Bytes()
 	return
 }
