@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 
 	golpe "github.com/jm33-m0/go-lpe"
 )
@@ -13,7 +13,7 @@ func main() {
 	elf_path := flag.String("file", "", "target file to encode")
 	flag.Parse()
 
-	elf_data, err := ioutil.ReadFile(*elf_path)
+	elf_data, err := os.ReadFile(*elf_path)
 	if err != nil {
 		log.Fatalf("read %s: %v", *elf_path, err)
 	}
